@@ -3,6 +3,7 @@
 #include<string>
 #include<unordered_map>
 #include<unordered_set>
+#include <conio.h>
 using namespace std;
 
 class Course{
@@ -32,6 +33,7 @@ public:
 	}
 	void signUpStudent();
 	void loginStudent();
+	void searchCourse();
 };
 class Admin{
 public:
@@ -47,6 +49,7 @@ public:
 };
 unordered_map<string, Student> students;
 unordered_map<string, Admin> admins;
+unordered_map<string, Course> courses;
 void Student:: signUpStudent() {
 	string id, name, password;
 	cout << "enter Student ID: ";
@@ -73,7 +76,21 @@ void Student:: loginStudent() {
 		cout << "enter Student ID: ";
 		cin >> id;
 		cout << "enter Student password: ";
-		cin >> password;
+		password = "";
+		char ch;
+		while ((ch = _getch()) != '\r') { 
+			if (ch == '\b') { 
+				if (!password.empty()) {
+					password.pop_back();
+					cout << "\b \b";
+				}
+			}
+			else {
+				password += ch;
+				cout << '*';
+			}
+		}
+		cout << endl;
 		if (students.find(id) == students.end())//if doesn't exist a Student has this ID in H.Table
 		{
 			cout << "the Student doesn't exist.\n";
@@ -100,6 +117,13 @@ void Student:: loginStudent() {
 	}
 
 }
+void Student::searchCourse() {
+	cout << "Availabe Courses Are:" << endl;
+	for (auto it=courses.begin();it!=courses.end() ; it++)
+	{
+		cout <<"Code: "<< it->first << "\t" << "name: "<<it->second.name << endl;
+	}
+}
 void Admin:: signUpAdmin() {
 	string username, password;
 	cout << "Enter Admin Username: ";
@@ -124,7 +148,21 @@ void Admin:: loginAdmin() {
 		cout << "Enter Admin Username: ";
 		cin >> username;
 		cout << "Enter Admin Password: ";
-		cin >> password;
+		password = "";
+		char ch;
+		while ((ch = _getch()) != '\r') {
+			if (ch == '\b') {
+				if (!password.empty()) {
+					password.pop_back();
+					cout << "\b \b";
+				}
+			}
+			else {
+				password += ch;
+				cout << '*';
+			}
+		}
+		cout << endl;
 
 		if (admins.find(username) == admins.end()) {
 			cout << "Admin doesn't exists.\n";
@@ -150,6 +188,15 @@ void Admin:: loginAdmin() {
 	}
 }
 int main() {
+	/*Student s;*/
+	//Course c1("123", "introduction", {});
+	//courses.insert(make_pair("123",c1));
+	//Course c2("246", "SP", {});
+	//courses.insert(make_pair("246",c2));
+	//Course c3("235", "DS", {});
+	//courses.insert(make_pair("235",c3));
+	//s.searchCourse();
+	//return 0;//=============================>>>>stop
 	Student s;
 	Admin a;
 	int number = 0;
