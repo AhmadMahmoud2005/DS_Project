@@ -6,12 +6,23 @@
 #include <conio.h>
 using namespace std;
 
-class Course{
+class Course {
 public:
 	string code;
 	string name;
+	string instractor_name;
+	string syllabus;
+	float credit_hours;
 	vector<string> prerequisites;
-	Course(string id,string name,vector<string>prerequisites) {
+	Course() {
+		
+		this->code = "";
+		this->name = "";
+		this->instractor_name = "";
+		this->syllabus = "";
+		this->credit_hours = 0.0;
+	}
+	Course(string id, string name, vector<string>prerequisites) {
 		this->code = id;
 		this->name = name;
 		this->prerequisites = prerequisites;
@@ -46,6 +57,8 @@ public:
 	}
 	void signUpAdmin();
 	void loginAdmin();
+	void addCourse(string code, string name, string instractor_name, string syllabus, float credit_hours);
+	void setPrerequisites(string code , vector<string> prerequistes);
 };
 unordered_map<string, Student> students;
 unordered_map<string, Admin> admins;
@@ -186,6 +199,20 @@ void Admin:: loginAdmin() {
 			}
 		}
 	}
+}
+void Admin::addCourse(string code, string name, string instractor_name, string syllabus, float credit_hours) {
+	Course course ;
+	course.code = code;
+	course.credit_hours = credit_hours;
+	course.name = name;
+	course.instractor_name = instractor_name;
+	course.syllabus = syllabus;
+	
+	courses.insert(make_pair(code, course));
+
+}
+void Admin::setPrerequisites(string code , vector <string> prerequisites) {
+	courses[code].prerequisites = prerequisites;
 }
 int main() {
 	/*Student s;*/
