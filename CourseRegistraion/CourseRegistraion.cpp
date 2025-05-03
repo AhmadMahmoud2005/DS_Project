@@ -154,21 +154,30 @@ bool Student::checkPrerequisites(string code) {
 
 	int completedCoursesSize = this->completedCourses.size();
 	int prerequisitesSize = courses[code].prerequisites.size();
-	if (prerequisitesSize > completedCoursesSize)
-		return false;
+	if (prerequisitesSize == 0)
+		return true;
 	else
 	{
-		unordered_set<string>::iterator completedCoursesIt;
-		unordered_set<string>::iterator prerequisitesIt;
-	
-		for (prerequisitesIt = courses[code].prerequisites.begin(); prerequisitesIt != courses[code].prerequisites.end(); prerequisitesIt++)
+		if (completedCoursesSize == 0)
+			return false;
+		else
 		{
-			completedCoursesIt = this->completedCourses.find(*prerequisitesIt);
-			if (completedCoursesIt == this->completedCourses.end())
+			if (prerequisitesSize > completedCoursesSize)
 				return false;
+			else
+			{
+				unordered_set<string>::iterator completedCoursesIt;
+				unordered_set<string>::iterator prerequisitesIt;
+	
+				for (prerequisitesIt = courses[code].prerequisites.begin(); prerequisitesIt != courses[code].prerequisites.end(); prerequisitesIt++)
+				{
+					completedCoursesIt = this->completedCourses.find(*prerequisitesIt);
+					if (completedCoursesIt == this->completedCourses.end())
+						return false;
+				}
+				return true;
+			}
 		}
-		return true;
-		
 	}
 }
 void Admin::signUpAdmin() {
