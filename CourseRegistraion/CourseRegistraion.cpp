@@ -1,5 +1,6 @@
 #include "json.hpp"
 #include <fstream>
+#include <sstream>
 #include <iostream>
 #include <stdio.h>
 #include <string>
@@ -13,20 +14,6 @@
 using namespace std;
 using json = nlohmann::json;
 
-char _getch() {
-  struct termios oldt, newt;
-  char ch;
-
-  tcgetattr(STDIN_FILENO, &oldt); // get old terminal settings
-  newt = oldt;
-  newt.c_lflag &= ~(ICANON | ECHO);        // disable buffering and echo
-  tcsetattr(STDIN_FILENO, TCSANOW, &newt); // apply new settings
-
-  read(STDIN_FILENO, &ch, 1); // read a single char
-
-  tcsetattr(STDIN_FILENO, TCSANOW, &oldt); // restore old settings
-  return ch;
-}
 void mainMenu();
 
 class Course {
@@ -541,42 +528,136 @@ void Admin::addCourse(string code, string name, string instractor_name,
 void Admin::setPrerequisites(string code, unordered_set<string> prerequisites) {
   courses[code].prerequisites = prerequisites;
 }
+
+// Adjust to match Student class
+void update_student_grades_from_csv(
+    const std::string &csvFile,
+    std::unordered_map<std::string, Student> &students) {
+   std::ifstream file(csvFile);
+   std::string line;
+
+   std::vector<std::string> headers;
+   std::unordered_map<std::string, std::unordered_map<std::string, int>>
+       csvGrades;
+
+   // Parse headers
+   std::getline(file, line);
+   std::stringstream headerStream(line);
+   std::string col;
+   while (std::getline(headerStream, col, ',')) {
+      headers.push_back(col);
+   }
+
+   // Parse CSV data
+   while (std::getline(file, line)) {
+      std::stringstream ss(line);
+      std::string cell;
+      std::string student_id;
+      std::unordered_map<std::string, int> grades;
+
+      for (size_t i = 0; i < headers.size(); ++i) {
+         std::getline(ss, cell, ',');
+         if (i == 0)
+            student_id = cell;
+         else
+            grades[headers[i]] = std::stoi(cell);
+      }
+
+      csvGrades[student_id] = grades;
+   }
+
+   // Update students map
+   for (const auto &[id, grades] : csvGrades) {
+      if (students.count(id)) {
+         for (const auto &[course, grade] : grades) {
+            students[id].grades[course] = grade;
+         }
+      }
+   }
+
+   std::cout << "Grades updated from CSV.\n";
+}
+
+void save_students_grades_to_csv(
+    const std::string &filename,
+    const std::unordered_map<std::string, Student> &students) {
+   std::ofstream out(filename);
+   if (!out.is_open()) {
+      std::cerr << "Failed to open file for writing: " << filename << "\n";
+      return;
+   }
+
+   // 1. Collect all course codes that appear in any student's grades
+   std::unordered_set<std::string> allCourses;
+   for (const auto &[id, student] : students) {
+      for (const auto &[course, _] : student.grades) {
+         allCourses.insert(course);
+      }
+   }
+
+   // 2. Write header row: id,course1,course2,...
+   out << "id";
+   for (const auto &course : allCourses) {
+      out << "," << course;
+   }
+   out << "\n";
+
+   // 3. Write each student row
+   for (const auto &[id, student] : students) {
+      out << id;
+      for (const auto &course : allCourses) {
+         auto it = student.grades.find(course);
+         if (it != student.grades.end()) {
+            out << "," << it->second;
+         } else {
+            out << ","; // blank for missing grade
+         }
+      }
+      out << "\n";
+   }
+
+   out.close();
+   std::cout << "Student grades exported to " << filename << "\n";
+}
+
 void mainMenu() {
-  Student s;
-  Admin a;
-  int number = 0;
-  cout << "1-Login as Student\n";
-  cout << "2-Login as Admin\n";
-  cout << "3-SignUp as Student\n";
-  cout << "4-SignUP as Admin\n";
-  cout << "0-Exit\n";
-  cin >> number;
-  switch (number) {
-  case 1:
-    s.loginStudent();
-    break;
-  case 2:
-    a.loginAdmin();
-    break;
-  case 3:
-    s.signUpStudent();
-    break;
-  case 4:
-    a.signUpAdmin();
-    break;
-  case 0:
-    return;
-  default:
-    break;
-  }
+   Student s;
+   Admin a;
+   int number = 0;
+   cout << "1-Login as Student\n";
+   cout << "2-Login as Admin\n";
+   cout << "3-SignUp as Student\n";
+   cout << "4-SignUP as Admin\n";
+   cout << "0-Exit\n";
+   cin >> number;
+   switch (number) {
+   case 1:
+      s.loginStudent();
+      break;
+   case 2:
+      a.loginAdmin();
+      break;
+   case 3:
+      s.signUpStudent();
+      break;
+   case 4:
+      a.signUpAdmin();
+      break;
+   case 0:
+      return;
+   default:
+      break;
+   }
 }
 int main() {
-  load_students_from_file("data.json", students);
-  load_admins_from_file("data.json", admins);
-  loadCoursesFromFile("data.json", courses);
+   load_students_from_file("data.json", students);
+   load_admins_from_file("data.json", admins);
+   loadCoursesFromFile("data.json", courses);
+   update_student_grades_from_csv("grades.csv", students);
 
-  mainMenu();
+   mainMenu();
 
-  save_students_to_file("data.json", students);
-  save_admins_to_file("data.json", admins);
+   save_students_to_file("data.json", students);
+   save_admins_to_file("data.json", admins);
+   save_students_grades_to_csv("grades.csv", students);
 }
