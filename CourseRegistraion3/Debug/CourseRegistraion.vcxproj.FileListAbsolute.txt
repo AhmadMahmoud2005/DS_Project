@@ -1,3 +1,0 @@
-C:\ahmed_mobile\CourseRegistraion\Debug\CourseRegistraion.exe
-C:\ahmed_mobile\CourseRegistraion\DS_Project\Debug\CourseRegistraion.exe
-C:\ahmed_mobile\DS_Project\CourseRegistraion\Debug\CourseRegistraion.exe
