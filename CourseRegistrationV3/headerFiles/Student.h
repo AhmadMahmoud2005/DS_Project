@@ -26,6 +26,7 @@ public:
     const unordered_set<string>& getCompletedCourses() const;
     const unordered_set<string>& getRegisteredCourses() const;
     const unordered_map<string, int>& getGrades() const;
+    int getCourseGrade(const string& courseCode) const;
 
     // Setters
     void setSemester(int semester);
