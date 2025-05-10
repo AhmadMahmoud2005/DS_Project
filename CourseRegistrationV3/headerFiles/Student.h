@@ -27,6 +27,8 @@ public:
     const unordered_set<string>& getRegisteredCourses() const;
     const unordered_map<string, int>& getGrades() const;
     int getCourseGrade(const string& courseCode) const;
+    bool hasCompletedCourse(const string& courseCode) const;
+    bool isRegisteredInCourse(const string& courseCode) const;
 
     // Setters
     void setSemester(int semester);
@@ -45,6 +47,7 @@ public:
     void setGrade(const string& course, int grade);
     bool removeGrade(const string& course);
 
+    // System logic methods
     void studentMenu();
     void signUpStudent();
     void loginStudent();
