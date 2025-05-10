@@ -33,6 +33,7 @@ public:
     void setCreditHours(float hours);
 
     void addPrerequisite(const string& code);
+    bool hasPrerequisite(const string& courseCode) const;
     bool removePrerequisite(const string& code);
 };
 
