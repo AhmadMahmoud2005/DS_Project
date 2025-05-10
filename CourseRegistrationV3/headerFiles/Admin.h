@@ -26,5 +26,6 @@ public:
     void addPrerequisiteToCourse(const string& courseCode, const string& prerequisiteCode);
     void removePrerequisiteFromCourse(const string& courseCode, const string& prerequisiteCode);
     void uploadGradesFromCsv(string& filePath);
+    void updateGrades(string id, string code, int grade);
 };
 
