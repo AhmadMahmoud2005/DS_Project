@@ -35,6 +35,15 @@ const unordered_set<string> &Student::getRegisteredCourses() const {
 
 const unordered_map<string, int> &Student::getGrades() const { return grades; }
 
+int Student::getCourseGrade(const string& courseCode) const
+{
+    auto grade = grades.find(courseCode);
+    if (grade != grades.end()) {
+        return grade->second;
+    }
+    return -1; 
+}
+
 // Setters implementation
 void Student::setSemester(int semester) { this->semester = semester; }
 
