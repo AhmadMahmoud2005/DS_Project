@@ -135,7 +135,6 @@ void Admin::updateCourseName(const string& code, const string& newName) {
     cout << "Course name updated successfully.\n";
 }
 
-// تحديث اسم المحاضر
 void Admin::updateInstructor(const string& code, const string& newInstructor) {
     if (courses.find(code) == courses.end()) {
         cout << "Course not found!\n";
@@ -145,7 +144,6 @@ void Admin::updateInstructor(const string& code, const string& newInstructor) {
     cout << "Instructor updated successfully.\n";
 }
 
-// تحديث الخطة الدراسية
 void Admin::updateSyllabus(const string& code, const string& newSyllabus) {
     if (courses.find(code) == courses.end()) {
         cout << "Course not found!\n";
@@ -155,7 +153,6 @@ void Admin::updateSyllabus(const string& code, const string& newSyllabus) {
     cout << "Syllabus updated successfully.\n";
 }
 
-// تحديث الساعات المعتمدة
 void Admin::updateCreditHours(const string& code, float newCreditHours) {
     if (courses.find(code) == courses.end()) {
         cout << "Course not found!\n";
@@ -165,7 +162,6 @@ void Admin::updateCreditHours(const string& code, float newCreditHours) {
     cout << "Credit hours updated successfully.\n";
 }
 
-// تحديث الفصل الدراسي
 void Admin::updateSemester(const string& code, int newSemester) {
     if (courses.find(code) == courses.end()) {
         cout << "Course not found!\n";
@@ -175,7 +171,6 @@ void Admin::updateSemester(const string& code, int newSemester) {
     cout << "Semester updated successfully.\n";
 }
 
-// دالة شاملة لتعديل عدة خصائص مرة واحدة
 void Admin::updateCourseDetails(const string& code,
     const string& newName,
     const string& newInstructor,
@@ -300,13 +295,13 @@ void Admin::uploadGradesFromCsv(string& csvFile) {
                 const string& courseCode = courseGrades.first;
                 int grade = courseGrades.second;
 
-                if (courses.find(courseCode) != courses.end()) {
+                if (courses.find(courseCode) != courses.end() && student.isRegisteredInCourse(courseCode)) {
                     student.setGrade(courseCode, grade);
-                    student.addCompletedCourse(courseCode);
+                    if(grade >= 60)
+                        student.addCompletedCourse(courseCode);
 
-                    if (student.isRegisteredInCourse(courseCode)) {
-                        student.removeRegisteredCourse(courseCode);
-                    }
+                    student.removeRegisteredCourse(courseCode);
+                    
                 }
                 else {
                     cout << "Warning: Course '" << courseCode << "' not found in the system" << endl;
@@ -416,4 +411,5 @@ void Admin::updateGrades(string id, string code, int grade)
     }
 
 }
+
 
