@@ -192,3 +192,24 @@ void Admin::uploadGradesFromCsv(string &csvFile) {
 
    cout << "Grades updated from CSV.\n";
 }
+void Admin::updateGrades(string id, string code, int grade)
+{
+    if (students.find(id) == students.end())
+    {
+        cout << "This student not found!" << endl;
+        return;
+    }
+    else
+    {
+        if (students[id].getCompletedCourses().find(code) == students[id].getCompletedCourses().end())
+        {
+            cout << "This course not found!" << endl;
+            return;
+        }
+        else
+        {
+            students[id].setGrade(code, grade);
+        }
+    }
+
+}
